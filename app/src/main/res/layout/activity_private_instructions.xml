@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You can prank your friends with this app very easily.\nWhile clicking on the fingerprint button: \ncover the camera to achieve true result, or uncover the camera to achieve false result."
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp"
+        android:text="*note, by clicking on continue you will never see these instructions again."
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/continue_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_continue"
+        android:text="Continue"
+        android:textSize="20sp" />
+
+</LinearLayout>

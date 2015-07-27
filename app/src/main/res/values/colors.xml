@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="theme_primary">#FFf37a43</color>
+    <color name="theme_primary_dark">#FFCD6B3B</color>
+    <color name="theme_primary_light">#ffb4ac</color>
+
+    <color name="theme_accent">#21C097</color>
+    <color name="theme_accent_dark">#1B9675</color>
+
+    <color name="theme_background">@android:color/white</color>
+
+</resources>

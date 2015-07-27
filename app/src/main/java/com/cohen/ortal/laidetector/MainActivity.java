@@ -1,6 +1,7 @@
 package com.cohen.ortal.laidetector;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Camera;
@@ -17,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.HashMap;
+import java.util.Random;
 
 
 public class MainActivity extends Activity {
@@ -28,7 +30,6 @@ public class MainActivity extends Activity {
     private TextView textView;
     private TextView textViewTitle;
     private com.github.rahatarmanahmed.cpv.CircularProgressView circularProgressView;
-    boolean buttonTuched = false;
     final Handler handler = new Handler();
 
     @Override
@@ -40,23 +41,24 @@ public class MainActivity extends Activity {
         textViewTitle = (TextView) findViewById(android.R.id.title);
         circularProgressView = (com.github.rahatarmanahmed.cpv.CircularProgressView) findViewById(R.id.progress_view);
 
+        if(checkFirstRun()){
+            startActivity(new Intent(this, InstructionsActivity.class));
+        }
+
         fingerprint.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 switch (MotionEventCompat.getActionMasked(event)) {
                     case MotionEvent.ACTION_UP:
-                        buttonTuched = false;
                         circularProgressView.setVisibility(View.GONE);
                         handler.removeCallbacks(runnableAction);
                         break;
                     case MotionEvent.ACTION_DOWN:
-                        buttonTuched = true;
                         textViewTitle.setVisibility(View.GONE);
                         circularProgressView.setVisibility(View.VISIBLE);
                         circularProgressView.startAnimation();
-
-                        handler.postDelayed(runnableAction, 3000);
-
+                        Random r = new Random();
+                        handler.postDelayed(runnableAction, (r.nextInt(3000) + 1000));
                         break;
                     default:
                         break;
@@ -70,25 +72,26 @@ public class MainActivity extends Activity {
 
         @Override
         public void run() {
-
-                mCamera.takePicture(null,
-                        null, new Camera.PictureCallback() {
-
-                            @Override
-                            public void onPictureTaken(byte[] arg0, Camera arg1) {
-                                Bitmap bitmapPicture
-                                        = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
-
-                                textView.setText(String.valueOf(getNumberOfDifferentColors(bitmapPicture)));
-                                textViewTitle.setVisibility(View.VISIBLE);
-                                textViewTitle.setText(getNumberOfDifferentColors(bitmapPicture) > 40 ? "False" : "True");
-                                circularProgressView.setVisibility(View.GONE);
-                                mCamera.startPreview();
+            mCamera.takePicture(null,
+                    null, new Camera.PictureCallback() {
+                        @Override
+                        public void onPictureTaken(byte[] arg0, Camera arg1) {
+                            Bitmap bitmapPicture = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
+                            textView.setText(String.valueOf(getNumberOfDifferentColors(bitmapPicture)));
+                            textViewTitle.setVisibility(View.VISIBLE);
+                            int  numberOfDifferentColors = getNumberOfDifferentColors(bitmapPicture);
+                            if(numberOfDifferentColors < 40){
+                                textViewTitle.setText( "True");
+                            }else if(numberOfDifferentColors < 60){
+                                textViewTitle.setText( "Unclear");
+                            }else {
+                                textViewTitle.setText( "False");
                             }
-                        });
-            }
-        
-
+                            circularProgressView.setVisibility(View.GONE);
+                            mCamera.startPreview();
+                        }
+                    });
+        }
     };
 
 
@@ -106,7 +109,6 @@ public class MainActivity extends Activity {
             } else {
                 mCameraView.setCamera(mCamera);
             }
-
         }
     }
 
@@ -141,9 +143,7 @@ public class MainActivity extends Activity {
         int pixels[] = new int[size];
 
         Bitmap bitmap2 = bitmap.copy(Bitmap.Config.ARGB_4444, false);
-
         bitmap2.getPixels(pixels, 0, width, 0, 0, width, height);
-
         HashMap<Integer, Integer> colorMap = new HashMap<Integer, Integer>();
         int color = 0;
         for (int i = 0; i < pixels.length; i++) {
@@ -152,7 +152,19 @@ public class MainActivity extends Activity {
                 colorMap.put(color, 0);
             }
         }
-
         return colorMap.size();
+    }
+
+    public boolean checkFirstRun() {
+        boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("isFirstRun", true);
+        if (isFirstRun){
+            // Place your dialog code here to display the dialog
+
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE)
+                    .edit()
+                    .putBoolean("isFirstRun", false)
+                    .apply();
+        }
+        return isFirstRun;
     }
 }

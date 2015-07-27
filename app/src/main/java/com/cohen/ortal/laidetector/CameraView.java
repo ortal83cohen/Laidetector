@@ -27,6 +27,10 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback {
         return mCamera;
     }
 
+    public void setCamera(Camera mCamera) {
+        this.mCamera = mCamera;
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder surfaceHolder) {
         try {

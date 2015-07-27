@@ -1,112 +1,75 @@
 package com.cohen.ortal.laidetector;
 
 import android.app.Activity;
-
-import android.graphics.ImageFormat;
-import android.graphics.Rect;
-import android.graphics.YuvImage;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 
 public class MainActivity extends Activity {
+
+    private CameraView mCameraView;
+    private Camera mCamera = null;
+    private ImageButton fingerprint;
+    private FrameLayout camera_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ImageButton fingerprint = (ImageButton) findViewById(R.id.fingerprint);
-
+        fingerprint = (ImageButton) findViewById(R.id.fingerprint);
+        setupCamera();
         fingerprint.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mCamera.takePicture(null,
+                        null, new Camera.PictureCallback() {
 
+                            @Override
+                            public void onPictureTaken(byte[] arg0, Camera arg1) {
+                                Bitmap bitmapPicture
+                                        = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
+                                fingerprint.setImageDrawable(new BitmapDrawable(getResources(), bitmapPicture));
+                                mCamera.startPreview();
+                            }
+                        });
             }
         });
     }
 
-    public void onPreviewFrame2(byte[] data, Camera arg1) {
-        FileOutputStream outStream = null;
+    private void setupCamera() {
         try {
-            YuvImage yuvimage = new YuvImage(data,ImageFormat.NV21,arg1.getParameters().getPreviewSize().width,arg1.getParameters().getPreviewSize().height,null);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            yuvimage.compressToJpeg(new Rect(0,0,arg1.getParameters().getPreviewSize().width,arg1.getParameters().getPreviewSize().height), 80, baos);
-
-            outStream = new FileOutputStream(String.format("/sdcard/%d.jpg", System.currentTimeMillis()));
-            outStream.write(baos.toByteArray());
-            outStream.close();
-
-            Log.d("", "onPreviewFrame - wrote bytes: " + data.length);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
+            mCamera = Camera.open();//you can use open(int) to use different cameras
+        } catch (Exception e) {
+            Log.d("ERROR", "Failed to get camera: " + e.getMessage());
         }
-//        Preview.this.invalidate();
-    }
-    public void onPreviewFrame(byte[] data, Camera camera)
-    {
-        int PreviewSizeWidth = 100;
-        int PreviewSizeHeight =100;
-        String NowPictureFileName = "ddd";
-        Camera.Parameters parameters = camera.getParameters();
-        int imageFormat = parameters.getPreviewFormat();
-        if (imageFormat == ImageFormat.NV21)
-        {
-            Rect rect = new Rect(0, 0, PreviewSizeWidth, PreviewSizeHeight);
-            YuvImage img = new YuvImage(data, ImageFormat.NV21, PreviewSizeWidth, PreviewSizeHeight, null);
-            OutputStream outStream = null;
-            File file = new File(NowPictureFileName);
-            try
-            {
-                outStream = new FileOutputStream(file);
-                img.compressToJpeg(rect, 100, outStream);
-                outStream.flush();
-                outStream.close();
-            }
-            catch (FileNotFoundException e)
-            {
-                e.printStackTrace();
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+        if (mCamera != null) {
+            mCameraView = new CameraView(this, mCamera);//create a SurfaceView to show camera data
+            camera_view = (FrameLayout) findViewById(R.id.camera_view);
+            camera_view.addView(mCameraView);//add the SurfaceView to the layout
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 }

@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                         circularProgressView.setVisibility(View.VISIBLE);
                         circularProgressView.startAnimation();
                         Random r = new Random();
-                        handler.postDelayed(runnableAction, (r.nextInt(3000) + 1000));
+                        handler.postDelayed(runnableAction, (r.nextInt(3000) + 300));
                         break;
                     default:
                         break;

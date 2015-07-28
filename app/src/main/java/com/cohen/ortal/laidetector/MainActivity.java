@@ -22,6 +22,9 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.util.HashMap;
 import java.util.Random;
 
@@ -48,6 +51,9 @@ public class MainActivity extends AppCompatActivity {
         textViewTitle = (TextView) findViewById(android.R.id.title);
         appBar = (com.cohen.ortal.laidetector.AppBar) findViewById(R.id.app_bar);
         circularProgressView = (com.github.rahatarmanahmed.cpv.CircularProgressView) findViewById(R.id.progress_view);
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         setupToolbar();
         if (checkFirstRun()) {
             startActivity(new Intent(this, PrivateInstructionsActivity.class));

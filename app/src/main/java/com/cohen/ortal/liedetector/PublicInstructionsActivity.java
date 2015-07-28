@@ -1,4 +1,4 @@
-package com.cohen.ortal.laidetector;
+package com.cohen.ortal.liedetector;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;

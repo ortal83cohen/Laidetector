@@ -25,4 +25,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.github.rahatarmanahmed:circularprogressview:2.3.2'
     compile 'com.google.android.gms:play-services-ads:7.5.0'
+    compile 'com.google.android.gms:play-services-analytics:7.3.0'
 }

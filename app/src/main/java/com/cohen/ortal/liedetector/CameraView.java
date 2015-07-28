@@ -1,4 +1,4 @@
-package com.cohen.ortal.laidetector;
+package com.cohen.ortal.liedetector;
 
 import android.content.Context;
 import android.hardware.Camera;

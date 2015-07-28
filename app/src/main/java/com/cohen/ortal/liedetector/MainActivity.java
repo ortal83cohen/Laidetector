@@ -1,4 +1,4 @@
-package com.cohen.ortal.laidetector;
+package com.cohen.ortal.liedetector;
 
 
 import android.animation.ArgbEvaluator;
@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout camera_view;
     private TextView textView;
     private TextView textViewTitle;
-    private com.cohen.ortal.laidetector.AppBar appBar;
+    private com.cohen.ortal.liedetector.AppBar appBar;
     private com.github.rahatarmanahmed.cpv.CircularProgressView circularProgressView;
 
 
@@ -49,11 +49,14 @@ public class MainActivity extends AppCompatActivity {
         fingerprint = (ImageButton) findViewById(R.id.fingerprint);
         textView = (TextView) findViewById(android.R.id.text1);
         textViewTitle = (TextView) findViewById(android.R.id.title);
-        appBar = (com.cohen.ortal.laidetector.AppBar) findViewById(R.id.app_bar);
+        appBar = (com.cohen.ortal.liedetector.AppBar) findViewById(R.id.app_bar);
         circularProgressView = (com.github.rahatarmanahmed.cpv.CircularProgressView) findViewById(R.id.progress_view);
         AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+        AdView mAdView1 = (AdView) findViewById(R.id.adView1);
+        AdRequest adRequest1 = new AdRequest.Builder().build();
+        mAdView1.loadAd(adRequest1);
         setupToolbar();
         if (checkFirstRun()) {
             startActivity(new Intent(this, PrivateInstructionsActivity.class));

@@ -1,4 +1,4 @@
-package com.cohen.ortal.laidetector;
+package com.cohen.ortal.liedetector;
 
 import android.content.Intent;
 import android.os.Bundle;

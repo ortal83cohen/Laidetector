@@ -1,4 +1,4 @@
-package com.cohen.ortal.laidetector;
+package com.cohen.ortal.liedetector;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

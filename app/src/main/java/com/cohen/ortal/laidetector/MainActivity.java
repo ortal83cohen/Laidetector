@@ -1,9 +1,12 @@
 package com.cohen.ortal.laidetector;
 
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,33 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout camera_view;
     private TextView textView;
     private TextView textViewTitle;
+    private com.cohen.ortal.laidetector.AppBar appBar;
     private com.github.rahatarmanahmed.cpv.CircularProgressView circularProgressView;
-    final Runnable runnableAction = new Runnable() {
 
-        @Override
-        public void run() {
-            mCamera.takePicture(null,
-                    null, new Camera.PictureCallback() {
-                        @Override
-                        public void onPictureTaken(byte[] arg0, Camera arg1) {
-                            Bitmap bitmapPicture = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
-                            textView.setText(String.valueOf(getNumberOfDifferentColors(bitmapPicture)));
-                            textViewTitle.setVisibility(View.VISIBLE);
-                            int numberOfDifferentColors = getNumberOfDifferentColors(bitmapPicture);
-                            if (numberOfDifferentColors < 40) {
-                                textViewTitle.setText("True");
-                            } else if (numberOfDifferentColors < 60) {
-                                textViewTitle.setText("Unclear");
-                            } else {
-                                textViewTitle.setText("False");
-                            }
-                            circularProgressView.setVisibility(View.GONE);
-                            mCamera.startPreview();
-                        }
-                    });
-        }
-    };
-    private AppBar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         fingerprint = (ImageButton) findViewById(R.id.fingerprint);
         textView = (TextView) findViewById(android.R.id.text1);
         textViewTitle = (TextView) findViewById(android.R.id.title);
+        appBar = (com.cohen.ortal.laidetector.AppBar) findViewById(R.id.app_bar);
         circularProgressView = (com.github.rahatarmanahmed.cpv.CircularProgressView) findViewById(R.id.progress_view);
         setupToolbar();
         if (checkFirstRun()) {
@@ -86,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                         circularProgressView.setVisibility(View.VISIBLE);
                         circularProgressView.startAnimation();
                         Random r = new Random();
+                        colorAnimation(appBar, getResources().getColor(R.color.natural_theme_primary));
                         handler.postDelayed(runnableAction, (r.nextInt(3000) + 300));
                         break;
                     default:
@@ -94,6 +75,49 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
+
+    final Runnable runnableAction = new Runnable() {
+
+        @Override
+        public void run() {
+            mCamera.takePicture(null,
+                    null, new Camera.PictureCallback() {
+                        @Override
+                        public void onPictureTaken(byte[] arg0, Camera arg1) {
+                            Bitmap bitmapPicture = BitmapFactory.decodeByteArray(arg0, 0, arg0.length);
+                            textView.setText(String.valueOf(getNumberOfDifferentColors(bitmapPicture)));
+                            textViewTitle.setVisibility(View.VISIBLE);
+                            int numberOfDifferentColors = getNumberOfDifferentColors(bitmapPicture);
+                            if (numberOfDifferentColors < 40) {
+                                textViewTitle.setText("True");
+                                colorAnimation(appBar, getResources().getColor(R.color.true_theme_primary));
+                            } else if (numberOfDifferentColors < 60) {
+                                textViewTitle.setText("Unclear");
+                                colorAnimation(appBar, getResources().getColor(R.color.natural_theme_primary));
+                            } else {
+                                textViewTitle.setText("False");
+                                colorAnimation(appBar, getResources().getColor(R.color.false_theme_primary));
+                            }
+                            circularProgressView.setVisibility(View.GONE);
+                            mCamera.startPreview();
+                        }
+                    });
+        }
+    };
+    private AppBar mToolbar;
+
+    private void colorAnimation(final View view, Integer colorTo) {
+        Integer colorFrom = ((ColorDrawable) view.getBackground()).getColor();
+        ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+        colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animator) {
+                view.setBackgroundColor((Integer) animator.getAnimatedValue());
+            }
+        });
+        colorAnimation.setDuration(500);
+        colorAnimation.start();
     }
 
     private void setupCamera() {

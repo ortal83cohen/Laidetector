@@ -54,9 +54,6 @@ public class MainActivity extends AppCompatActivity {
         AdView mAdView = (AdView) findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
-        AdView mAdView1 = (AdView) findViewById(R.id.adView1);
-        AdRequest adRequest1 = new AdRequest.Builder().build();
-        mAdView1.loadAd(adRequest1);
         setupToolbar();
         if (checkFirstRun()) {
             startActivity(new Intent(this, PrivateInstructionsActivity.class));

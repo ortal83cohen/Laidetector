@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="16dp"
-        android:text="put your finger on the fingerprint icon for a couple of seconds until the app will decide if you are truthful buy your pulse heart."
+        android:text="@string/public_instructions"
         android:textSize="20sp" />
 
 
